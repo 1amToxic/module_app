@@ -1,0 +1,4 @@
+include ':test_location'
+include ':get_location'
+include ':app'
+rootProject.name = "ModuleApp"
