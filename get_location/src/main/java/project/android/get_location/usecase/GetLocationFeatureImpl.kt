@@ -5,7 +5,6 @@ import android.app.Activity
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
-import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
@@ -13,7 +12,6 @@ import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationListener
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
-import timber.log.Timber
 import java.util.*
 
 class GetLocationFeatureImpl(val callback : (Response) -> Unit) :
@@ -22,7 +20,6 @@ class GetLocationFeatureImpl(val callback : (Response) -> Unit) :
     GoogleApiClient.ConnectionCallbacks,
     GoogleApiClient.OnConnectionFailedListener {
     companion object {
-        val REQUEST_CODE: Int = Random().nextInt(1000)+1000
         val PLAY_SERVICES_RESOLUTION_REQUEST = Random().nextInt(1000)+1000
         const val UPDATE_INTERVAL: Long = 5000
         const val FASTEST_INTERVAL: Long = 4000
@@ -31,10 +28,6 @@ class GetLocationFeatureImpl(val callback : (Response) -> Unit) :
     private var location: Location? = null
     lateinit var locationRequest: LocationRequest
     var googleApiClient: GoogleApiClient? = null
-//    val permission = mutableListOf(
-//        Manifest.permission.ACCESS_FINE_LOCATION,
-//        Manifest.permission.ACCESS_COARSE_LOCATION
-//    )
 
     override fun getLocation(activity : Activity) {
         this.activity = activity
@@ -100,7 +93,7 @@ class GetLocationFeatureImpl(val callback : (Response) -> Unit) :
             return
         }
         LocationServices.FusedLocationApi.requestLocationUpdates(
-            googleApiClient,
+            googleApiClient!!,
             locationRequest,
             this
         )
