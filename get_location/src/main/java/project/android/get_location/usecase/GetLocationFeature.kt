@@ -7,8 +7,7 @@ import android.view.ViewGroup
 interface GetLocationFeature {
     fun getLocation(activity: Activity)
     fun checkPlayService() : Boolean
-    fun requestPermission()
-    fun permissionToRequest(listPermission : List<String>) : List<String>
+    fun permissionToRequest() : List<String>
     fun hasPermission(permission : String) : Boolean
     fun startLocationUpdate()
     fun initGoogleApiClient()
@@ -19,6 +18,6 @@ interface GetLocationFeature {
     }
 }
 data class Response(
-    val value : Location?,
+    val value : Any?,
     val status : GetLocationFeature.Status
 )

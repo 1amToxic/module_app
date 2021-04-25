@@ -13,6 +13,7 @@ import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationListener
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
+import timber.log.Timber
 import java.util.*
 
 class GetLocationFeatureImpl(val callback : (Response) -> Unit) :
@@ -30,17 +31,23 @@ class GetLocationFeatureImpl(val callback : (Response) -> Unit) :
     private var location: Location? = null
     lateinit var locationRequest: LocationRequest
     var googleApiClient: GoogleApiClient? = null
-    val permission = mutableListOf(
-        Manifest.permission.ACCESS_FINE_LOCATION,
-        Manifest.permission.ACCESS_COARSE_LOCATION
-    )
+//    val permission = mutableListOf(
+//        Manifest.permission.ACCESS_FINE_LOCATION,
+//        Manifest.permission.ACCESS_COARSE_LOCATION
+//    )
 
     override fun getLocation(activity : Activity) {
         this.activity = activity
         if (!checkPlayService()) {
             callback(Response(null,GetLocationFeature.Status.BUG))
         }
-        requestPermission()
+        val list = permissionToRequest()
+        if(list.isEmpty()){
+            initGoogleApiClient()
+        }
+        else{
+            callback(Response(list,GetLocationFeature.Status.DENY))
+        }
 
     }
 
@@ -58,19 +65,7 @@ class GetLocationFeatureImpl(val callback : (Response) -> Unit) :
         return true
     }
 
-    override fun requestPermission() {
-        if(permissionToRequest(permission).isNotEmpty()) {
-            activity.requestPermissions(
-                permissionToRequest(permission).toTypedArray(),
-                REQUEST_CODE
-            )
-        }else{
-            initGoogleApiClient()
-            googleApiClient?.connect()
-        }
-    }
-
-    override fun permissionToRequest(listPermission: List<String>): List<String> {
+    override fun permissionToRequest(): List<String> {
         val listPermission = mutableListOf<String>()
         if(ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION)
             != PackageManager.PERMISSION_GRANTED) {
@@ -101,13 +96,9 @@ class GetLocationFeatureImpl(val callback : (Response) -> Unit) :
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            Toast.makeText(
-                activity,
-                "You need to enable permissions to display location !",
-                Toast.LENGTH_SHORT
-            ).show()
+            callback(Response(permissionToRequest(),GetLocationFeature.Status.DENY))
+            return
         }
-
         LocationServices.FusedLocationApi.requestLocationUpdates(
             googleApiClient,
             locationRequest,
@@ -125,6 +116,7 @@ class GetLocationFeatureImpl(val callback : (Response) -> Unit) :
             && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION)
             != PackageManager.PERMISSION_GRANTED
         ) {
+            callback(Response(permissionToRequest(),GetLocationFeature.Status.DENY))
             return
         }
         location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient)
