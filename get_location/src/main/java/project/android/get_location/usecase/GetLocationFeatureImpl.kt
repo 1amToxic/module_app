@@ -12,7 +12,7 @@ class GetLocationFeatureImpl(val callback : (Response) -> Unit) :
     GetLocationFeature,
     LocationListener {
     companion object {
-        const val UPDATE_INTERVAL: Long = 5000
+        const val UPDATE_INTERVAL: Long = 60000
     }
     private lateinit var locationManager : LocationManager
 
