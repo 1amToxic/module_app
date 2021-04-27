@@ -1,16 +1,12 @@
 package project.android.get_location.usecase
 
 import android.app.Activity
+import android.content.Context
 import android.location.Location
 import android.view.ViewGroup
 
 interface GetLocationFeature {
-    fun getLocation(activity: Activity)
-    fun checkPlayService() : Boolean
-    fun permissionToRequest() : List<String>
-    fun hasPermission(permission : String) : Boolean
-    fun startLocationUpdate()
-    fun initGoogleApiClient()
+    fun getLocation(context : Context)
     enum class Status{
         DENY,
         ACCEPT,
