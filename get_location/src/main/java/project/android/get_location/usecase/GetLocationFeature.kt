@@ -7,10 +7,12 @@ import android.view.ViewGroup
 
 interface GetLocationFeature {
     fun getLocation(context : Context)
+    fun disableGetLocation()
     enum class Status{
         DENY,
         ACCEPT,
-        BUG
+        BUG,
+        DISABLE
     }
 }
 data class Response(

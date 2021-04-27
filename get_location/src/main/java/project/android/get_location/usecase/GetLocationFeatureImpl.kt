@@ -36,8 +36,13 @@ class GetLocationFeatureImpl(val callback : (Response) -> Unit) :
             callback(Response(list,GetLocationFeature.Status.DENY))
             return
         }
-        locationManager!!.requestLocationUpdates(LocationManager.GPS_PROVIDER, UPDATE_INTERVAL,0F,this)
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, UPDATE_INTERVAL,0F,this)
 
+    }
+
+    override fun disableGetLocation() {
+        locationManager.removeUpdates(this)
+        callback(Response("Disable Update Location Success",GetLocationFeature.Status.DISABLE))
     }
 
 

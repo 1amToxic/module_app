@@ -2,12 +2,10 @@ package project.android.moduleapp
 
 import android.location.Location
 import android.os.Bundle
+import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import project.android.get_location.usecase.GetLocationFeature
-import project.android.get_location.usecase.GetLocationFeatureImpl
-import project.android.get_location.usecase.GetLocationUC
-import project.android.get_location.usecase.Response
+import project.android.get_location.usecase.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -16,10 +14,14 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val getLocationUC = GetLocationUC()
+        val disableLocationUC = DisableLocationUC()
         getLocationFeatureImpl = GetLocationFeatureImpl{
             checkTypeResponse(it)
         }
         getLocationUC(getLocationFeatureImpl,this)
+        findViewById<Button>(R.id.disable_get_location).setOnClickListener {
+            disableLocationUC(getLocationFeatureImpl)
+        }
     }
     private fun checkTypeResponse(response: Response){
         when(response.status){
@@ -32,6 +34,9 @@ class MainActivity : AppCompatActivity() {
             }
             GetLocationFeature.Status.DENY ->{
                 Toast.makeText(this,"Oops! Some permission has been Deny ${response.value.toString()}",Toast.LENGTH_SHORT).show()
+            }
+            GetLocationFeature.Status.DISABLE ->{
+                Toast.makeText(this, response.value.toString(),Toast.LENGTH_SHORT).show()
             }
         }
     }
